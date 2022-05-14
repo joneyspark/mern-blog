@@ -2,9 +2,10 @@ import express from "express";
 import mongoose from "mongoose";
 import blogRouter from "./routes/blog_routes.js";
 import userRouter from "./routes/user_routes.js";
+import cors from "cors";
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
 app.use("/api/user", userRouter);
