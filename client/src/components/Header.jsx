@@ -9,9 +9,11 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../store";
 
 const Header = () => {
+  const dispatch = useDispatch();
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
   const [value, setValue] = React.useState(0);
   return (
@@ -64,6 +66,8 @@ const Header = () => {
 
           {isLoggedIn && (
             <Button
+              onClick={() => dispatch(authActions.logout())}
+              to="/auth"
               variant="contained"
               sx={{ margin: 1, borderRadius: 10 }}
               color="warning"
