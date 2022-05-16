@@ -9,6 +9,7 @@ import { baseURL } from "../api";
 const Auth = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [error, setError] = useState("");
   const [inputs, setInputs] = useState({
     name: "",
     email: "",
@@ -20,12 +21,14 @@ const Auth = () => {
   };
   const sendRequest = async (type = "signin") => {
     const res = axios
-      .post(`${baseURL}/user/${type}`, {
+      .post(`${baseURL}/users/${type}`, {
         name: inputs.name,
         email: inputs.email,
         password: inputs.password,
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setError(err.response.data);
+      });
 
     const data = await res;
     return data;
@@ -33,19 +36,23 @@ const Auth = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isSignup) {
-      sendRequest("signup")
-        .then(() => dispatch(authActions.login()))
-        .then(() => navigate("/blogs"))
-        .then((data) => {
-          console.log(data);
-        });
+      sendRequest("signup").then((data) => {
+        if (data.status === 200) {
+          localStorage.setItem("user", data.data.user._id);
+          dispatch(authActions.login());
+          navigate("/blogs");
+          setError("");
+        }
+      });
     } else {
-      sendRequest()
-        .then(() => dispatch(authActions.login()))
-        .then(() => navigate("/blogs"))
-        .then((data) => {
-          console.log(data);
-        });
+      sendRequest().then((data) => {
+        if (data.status === 200) {
+          localStorage.setItem("user", data.data.user._id);
+          dispatch(authActions.login());
+          navigate("/blogs");
+          setError("");
+        }
+      });
     }
   };
   return (
@@ -91,6 +98,9 @@ const Auth = () => {
             margin="normal"
             name="password"
           />
+          <Typography variant="h6" color="error">
+            {error}
+          </Typography>
           <Button
             variant="contained"
             color="warning"

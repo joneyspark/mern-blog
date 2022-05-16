@@ -31,5 +31,5 @@ export const signin = async (req, res, next) => {
   if (!existingUser) return res.status(404).send("User does not exist");
   const isMatch = await bcrypt.compare(password, existingUser.password);
   if (!isMatch) return res.status(400).send("Incorrect password");
-  res.status(200).json({ message: "Login successful" });
+  res.status(200).json({ message: "Login successful", user: existingUser });
 };
